@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Calendar;
 
 import javax.mail.Flags;
@@ -32,6 +33,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 public class SimpleMessageTest {
+    private static final Charset MESSAGE_CHARSET = Charset.forName("UTF-8");
     private static final String MESSAGE_CONTENT = "Simple message content without special characters";
     private static final String MESSAGE_CONTENT_SPECIAL_CHAR = "Simple message content with special characters: \"'(§è!çà$*`";
     private static final SimpleMessage<Long> MESSAGE = buildMessage(MESSAGE_CONTENT);
@@ -67,15 +69,15 @@ public class SimpleMessageTest {
     @Test
     public void testFullContent() throws IOException {
         assertEquals(MESSAGE_CONTENT,
-                new String(IOUtils.toByteArray(MESSAGE.getFullContent())));
+                new String(IOUtils.toByteArray(MESSAGE.getFullContent()),MESSAGE_CHARSET));
         assertEquals(MESSAGE_CONTENT_SPECIAL_CHAR,
-                new String(IOUtils.toByteArray(MESSAGE_SPECIAL_CHAR.getFullContent())));
+                new String(IOUtils.toByteArray(MESSAGE_SPECIAL_CHAR.getFullContent()),MESSAGE_CHARSET));
     }
 
     private static SimpleMessage<Long> buildMessage(String content) {
         return new SimpleMessage<Long>(Calendar.getInstance().getTime(),
                 content.length(), 0, new SharedByteArrayInputStream(
-                        content.getBytes()), new Flags(),
+                        content.getBytes(MESSAGE_CHARSET)), new Flags(),
                 new PropertyBuilder(), 1L);
     }
 
