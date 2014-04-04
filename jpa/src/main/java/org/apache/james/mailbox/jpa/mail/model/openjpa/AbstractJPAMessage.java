@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.mail.Flags;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -30,13 +29,13 @@ import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-
 import org.apache.james.mailbox.exception.MailboxException;
 import org.apache.james.mailbox.jpa.mail.model.JPAMailbox;
 import org.apache.james.mailbox.jpa.mail.model.JPAProperty;
@@ -152,7 +151,7 @@ public abstract class AbstractJPAMessage extends AbstractMessage<Long> {
                     CascadeType.REFRESH, 
                     CascadeType.MERGE}, 
             fetch=FetchType.LAZY)
-    @Column(name = "MAILBOX_ID", nullable = true)
+    @JoinColumn(name = "MAILBOX_ID", nullable = true)
     private JPAMailbox mailbox;
 
     /** The value for the uid field */
