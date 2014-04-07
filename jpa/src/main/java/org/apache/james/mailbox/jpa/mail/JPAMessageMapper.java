@@ -22,20 +22,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-
 import org.apache.james.mailbox.MailboxSession;
 import org.apache.james.mailbox.exception.MailboxException;
+import org.apache.james.mailbox.jpa.mail.model.AbstractJPAMessage;
 import org.apache.james.mailbox.jpa.mail.model.JPAMailbox;
-import org.apache.james.mailbox.jpa.mail.model.openjpa.AbstractJPAMessage;
-import org.apache.james.mailbox.jpa.mail.model.openjpa.JPAEncryptedMessage;
-import org.apache.james.mailbox.jpa.mail.model.openjpa.JPAMessage;
-import org.apache.james.mailbox.jpa.mail.model.openjpa.JPAStreamingMessage;
+import org.apache.james.mailbox.jpa.mail.model.JPAMessage;
 import org.apache.james.mailbox.model.MessageMetaData;
 import org.apache.james.mailbox.model.MessageRange;
 import org.apache.james.mailbox.model.MessageRange.Type;
@@ -46,7 +42,6 @@ import org.apache.james.mailbox.store.mail.ModSeqProvider;
 import org.apache.james.mailbox.store.mail.UidProvider;
 import org.apache.james.mailbox.store.mail.model.Mailbox;
 import org.apache.james.mailbox.store.mail.model.Message;
-import org.apache.openjpa.persistence.ArgumentException;
 
 /**
  * JPA implementation of a {@link MessageMapper}. This class is not thread-safe!
@@ -281,13 +276,7 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
     protected MessageMetaData copy(Mailbox<Long> mailbox, long uid, long modSeq, Message<Long> original)
             throws MailboxException {
         Message<Long> copy;
-        if (original instanceof JPAStreamingMessage) {
-            copy = new JPAStreamingMessage((JPAMailbox) mailbox, uid, modSeq, original);
-        } else if (original instanceof JPAEncryptedMessage) {
-            copy = new JPAEncryptedMessage((JPAMailbox) mailbox, uid, modSeq, original);
-        } else {
-            copy = new JPAMessage((JPAMailbox) mailbox, uid, modSeq, original);
-        }
+        copy = new JPAMessage((JPAMailbox) mailbox, uid, modSeq, original);
         return save(mailbox, copy);
     }
 
@@ -309,8 +298,6 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
             getEntityManager().persist(message);
             return new SimpleMessageMetaData(message);
         } catch (PersistenceException e) {
-            throw new MailboxException("Save of message " + message + " failed in mailbox " + mailbox, e);
-        } catch (ArgumentException e) {
             throw new MailboxException("Save of message " + message + " failed in mailbox " + mailbox, e);
         }
     }

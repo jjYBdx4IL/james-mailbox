@@ -16,13 +16,12 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  ****************************************************************/
-package org.apache.james.mailbox.jpa.mail.model.openjpa;
+package org.apache.james.mailbox.jpa.mail.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.mail.Flags;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -36,18 +35,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-
 import org.apache.james.mailbox.exception.MailboxException;
-import org.apache.james.mailbox.jpa.mail.model.JPAMailbox;
-import org.apache.james.mailbox.jpa.mail.model.JPAProperty;
-import org.apache.james.mailbox.jpa.mail.model.JPAUserFlag;
 import org.apache.james.mailbox.store.mail.model.AbstractMessage;
 import org.apache.james.mailbox.store.mail.model.Message;
 import org.apache.james.mailbox.store.mail.model.Property;
 import org.apache.james.mailbox.store.mail.model.impl.PropertyBuilder;
-import org.apache.openjpa.persistence.jdbc.ElementJoinColumn;
-import org.apache.openjpa.persistence.jdbc.ElementJoinColumns;
-import org.apache.openjpa.persistence.jdbc.Index;
 
 /**
  * Abstract base class for JPA based implementations of {@link AbstractMessage}
@@ -55,7 +47,7 @@ import org.apache.openjpa.persistence.jdbc.Index;
 @IdClass(AbstractJPAMessage.MailboxIdUidKey.class)
 @NamedQueries({
     @NamedQuery(name="findRecentMessageUidsInMailbox",
-            query="SELECT message.uid FROM Message message WHERE message.mailbox.mailboxId = :idParam AND message.recent = TRUE"),
+            query="SELECT message.uid FROM Message message WHERE message.mailboxId = :idParam AND message.recent = TRUE"),
     @NamedQuery(name="findUnseenMessagesInMailboxOrderByUid",
             query="SELECT message FROM Message message WHERE message.mailbox.mailboxId = :idParam AND message.seen = FALSE ORDER BY message.uid ASC"),
     @NamedQuery(name="findMessagesInMailbox",
@@ -161,7 +153,7 @@ public abstract class AbstractJPAMessage extends AbstractMessage<Long> {
     private long uid;
 
     /** The value for the modSeq field */
-    @Index
+    //@Index
     @Column(name = "MAIL_MODSEQ")
     private long modSeq;
 
@@ -178,7 +170,7 @@ public abstract class AbstractJPAMessage extends AbstractMessage<Long> {
     /** The value for the deleted field */
     @Basic(optional = false)
     @Column(name = "MAIL_IS_DELETED", nullable = false)
-    @Index
+    //@Index
     private boolean deleted = false;
 
     /** The value for the draft field */
@@ -194,13 +186,13 @@ public abstract class AbstractJPAMessage extends AbstractMessage<Long> {
     /** The value for the recent field */
     @Basic(optional = false)
     @Column(name = "MAIL_IS_RECENT", nullable = false)
-    @Index
+    //@Index
     private boolean recent = false;
 
     /** The value for the seen field */
     @Basic(optional = false)
     @Column(name = "MAIL_IS_SEEN", nullable = false)
-    @Index
+    //@Index
     private boolean seen = false;
 
     
@@ -233,14 +225,14 @@ public abstract class AbstractJPAMessage extends AbstractMessage<Long> {
     /** Meta data for this message */
     @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
     @OrderBy("line")
-    @ElementJoinColumns({@ElementJoinColumn(name="MAILBOX_ID", referencedColumnName="MAILBOX_ID"),
-                @ElementJoinColumn(name="MAIL_UID", referencedColumnName="MAIL_UID")})
+//    @ElementJoinColumns({@ElementJoinColumn(name="MAILBOX_ID", referencedColumnName="MAILBOX_ID"),
+//                @ElementJoinColumn(name="MAIL_UID", referencedColumnName="MAIL_UID")})
     private List<JPAProperty> properties;
 
     @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
     @OrderBy("id")
-    @ElementJoinColumns({@ElementJoinColumn(name="MAILBOX_ID", referencedColumnName="MAILBOX_ID"),
-    @ElementJoinColumn(name="MAIL_UID", referencedColumnName="MAIL_UID")})
+//    @ElementJoinColumns({@ElementJoinColumn(name="MAILBOX_ID", referencedColumnName="MAILBOX_ID"),
+//    @ElementJoinColumn(name="MAIL_UID", referencedColumnName="MAIL_UID")})
     private List<JPAUserFlag> userFlags;
     
     @Deprecated

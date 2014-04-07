@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  ****************************************************************/
-package org.apache.james.mailbox.jpa;
+package org.apache.james.mailbox.openjpa;
 
 import java.util.HashMap;
 
@@ -30,13 +30,17 @@ import org.apache.james.mailbox.acl.SimpleGroupMembershipResolver;
 import org.apache.james.mailbox.acl.UnionMailboxACLResolver;
 import org.apache.james.mailbox.exception.BadCredentialsException;
 import org.apache.james.mailbox.exception.MailboxException;
+import org.apache.james.mailbox.jpa.JPAMailboxManager;
+import org.apache.james.mailbox.jpa.JPAMailboxManager;
+import org.apache.james.mailbox.jpa.JPAMailboxSessionMapperFactory;
+import org.apache.james.mailbox.jpa.JPAMailboxSessionMapperFactory;
 import org.apache.james.mailbox.jpa.mail.JPAModSeqProvider;
 import org.apache.james.mailbox.jpa.mail.JPAUidProvider;
 import org.apache.james.mailbox.jpa.mail.model.JPAMailbox;
 import org.apache.james.mailbox.jpa.mail.model.JPAProperty;
 import org.apache.james.mailbox.jpa.mail.model.JPAUserFlag;
-import org.apache.james.mailbox.jpa.mail.model.openjpa.AbstractJPAMessage;
-import org.apache.james.mailbox.jpa.mail.model.openjpa.JPAMessage;
+import org.apache.james.mailbox.jpa.mail.model.AbstractJPAMessage;
+import org.apache.james.mailbox.jpa.mail.model.JPAMessage;
 import org.apache.james.mailbox.jpa.openjpa.OpenJPAMailboxManager;
 import org.apache.james.mailbox.jpa.user.model.JPASubscription;
 import org.apache.james.mailbox.store.JVMMailboxPathLocker;
@@ -46,9 +50,9 @@ import org.junit.Before;
 import org.slf4j.LoggerFactory;
 
 /**
- * JPAMailboxManagerTest that extends the StoreMailboxManagerTest.
+ * OpenJPAMailboxManagerTest that extends the StoreMailboxManagerTest.
  */
-public class JPAMailboxManagerTest extends AbstractMailboxManagerTest {
+public class OpenJPAMailboxManagerTest extends AbstractMailboxManagerTest {
     
     /**
      * The entity manager factory.

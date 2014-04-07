@@ -54,6 +54,7 @@
         <module>hbase</module>
         <module>jcr</module>
         <module>jpa</module>
+        <module>openjpa</module>
         <module>lucene</module>
         <module>maildir</module>
         <module>memory</module>
