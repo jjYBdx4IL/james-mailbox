@@ -36,6 +36,12 @@
             <groupId>org.apache.james</groupId>
             <artifactId>apache-james-mailbox-api</artifactId>
         </dependency>
+        <!-- required for IDEs only (we copy and enhance the generic JPA classes!): -->
+        <dependency>
+            <groupId>org.apache.james</groupId>
+            <artifactId>apache-james-mailbox-jpa</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.james</groupId>
             <artifactId>apache-james-mailbox-store</artifactId>
