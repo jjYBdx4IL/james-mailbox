@@ -30,6 +30,8 @@ import org.apache.james.mailbox.acl.MailboxACLResolver;
 import org.apache.james.mailbox.exception.MailboxException;
 import org.apache.james.mailbox.jpa.JPAMessageManager;
 import org.apache.james.mailbox.jpa.mail.model.JPAMailbox;
+import org.apache.james.mailbox.jpa.mail.model.openjpa.JPAEncryptedMessage;
+import org.apache.james.mailbox.jpa.mail.model.openjpa.JPAStreamingMessage;
 import org.apache.james.mailbox.store.MailboxEventDispatcher;
 import org.apache.james.mailbox.store.MailboxSessionMapperFactory;
 import org.apache.james.mailbox.store.mail.model.Mailbox;
@@ -67,7 +69,14 @@ public class OpenJPAMessageManager extends JPAMessageManager {
         if (headerEnd < 0) {
             headerEnd = 0;
         }
+        switch (feature) {
+        case Streaming:
+            return new JPAStreamingMessage((JPAMailbox) getMailboxEntity(), internalDate, size, flags, content, bodyStartOctet, propertyBuilder);
+        case Encryption:
+            return new JPAEncryptedMessage((JPAMailbox) getMailboxEntity(), internalDate, size, flags, content, bodyStartOctet, propertyBuilder);
+        default:
             return super.createMessage(internalDate, size, bodyStartOctet, content, flags,  propertyBuilder);
+        }
        
     }
 
