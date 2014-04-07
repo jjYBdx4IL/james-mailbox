@@ -18,7 +18,6 @@
  ****************************************************************/
 package org.apache.james.mailbox.jpa.mail.model;
 
-import org.apache.james.mailbox.jpa.mail.model.AbstractJPAMessage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +34,6 @@ import javax.persistence.Table;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.james.mailbox.exception.MailboxException;
-import org.apache.james.mailbox.jpa.mail.model.JPAMailbox;
 import org.apache.james.mailbox.store.mail.model.Message;
 import org.apache.james.mailbox.store.mail.model.impl.PropertyBuilder;
 

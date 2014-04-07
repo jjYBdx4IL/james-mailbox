@@ -29,6 +29,7 @@ import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
@@ -144,7 +145,7 @@ public abstract class AbstractJPAMessage extends AbstractMessage<Long> {
                     CascadeType.REFRESH, 
                     CascadeType.MERGE}, 
             fetch=FetchType.LAZY)
-    @Column(name = "MAILBOX_ID", nullable = true)
+    @JoinColumn(name = "MAILBOX_ID", nullable = true)
     private JPAMailbox mailbox;
 
     /** The value for the uid field */
