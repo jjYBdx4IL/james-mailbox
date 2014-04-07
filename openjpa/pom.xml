@@ -32,10 +32,10 @@
     <packaging>bundle</packaging>
 
     <dependencies>
-        <dependency>
+<!--        <dependency>
             <groupId>org.apache.james</groupId>
             <artifactId>apache-james-mailbox-jpa</artifactId>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.james</groupId>
             <artifactId>apache-james-mailbox-api</artifactId>
@@ -96,6 +96,29 @@
     </dependencies>
     <build>
         <plugins>
+            <!-- include jpa-implementation-shared entity classes for openjpa enhancement: -->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.james</groupId>
+                                    <artifactId>apache-james-mailbox-jpa</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>openjpa-maven-plugin</artifactId>
