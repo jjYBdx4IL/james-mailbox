@@ -36,7 +36,7 @@ import org.apache.james.mailbox.store.mail.model.Mailbox;
 @Table(name="JAMES_MAILBOX")
 @NamedQueries({
     @NamedQuery(name="findMailboxById",
-        query="SELECT mailbox FROM Mailbox mailbox WHERE mailbox.mailbox.mailboxId = :idParam"),
+        query="SELECT mailbox FROM Mailbox mailbox WHERE mailbox.mailboxId = :idParam"),
     @NamedQuery(name="findMailboxByName",
         query="SELECT mailbox FROM Mailbox mailbox WHERE mailbox.name = :nameParam and mailbox.user is NULL and mailbox.namespace= :namespaceParam"),
     @NamedQuery(name="findMailboxByNameWithUser",

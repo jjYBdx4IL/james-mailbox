@@ -48,7 +48,7 @@ import org.apache.james.mailbox.store.mail.model.impl.PropertyBuilder;
 @IdClass(AbstractJPAMessage.MailboxIdUidKey.class)
 @NamedQueries({
     @NamedQuery(name="findRecentMessageUidsInMailbox",
-            query="SELECT message.uid FROM Message message WHERE message.mailboxId = :idParam AND message.recent = TRUE"),
+            query="SELECT message.uid FROM Message message WHERE message.mailbox.mailboxId = :idParam AND message.recent = TRUE"),
     @NamedQuery(name="findUnseenMessagesInMailboxOrderByUid",
             query="SELECT message FROM Message message WHERE message.mailbox.mailboxId = :idParam AND message.seen = FALSE ORDER BY message.uid ASC"),
     @NamedQuery(name="findMessagesInMailbox",
