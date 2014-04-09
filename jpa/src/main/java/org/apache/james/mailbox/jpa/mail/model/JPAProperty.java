@@ -23,26 +23,31 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import org.apache.james.mailbox.store.mail.model.Property;
 
 @Entity(name = "Property")
-@Table(name = "JAMES_MAIL_PROPERTY")
+@Table(
+    name = "JAMES_MAIL_PROPERTY",
+    indexes = {
+        // TODO The columnNames are not interpreted, see OPENJPA-223 to fix
+        // MAILBOX-186
+        @Index(name = "INDEX_PROPERTY_MSG_ID", columnList = "MAILBOX_ID MAIL_UID"),
+        @Index(name = "INDEX_PROPERTY_LINE_NUMBER", columnList = "PROPERTY_LINE_NUMBER")
+    }
+)
 public class JPAProperty implements Property {
 
     /** The system unique key */
     @Id
     @GeneratedValue
     @Column(name = "PROPERTY_ID", nullable = true)
-    // TODO The columnNames are not interpreted, see OPENJPA-223 to fix
-    // MAILBOX-186
-    //@Index(name = "INDEX_PROPERTY_MSG_ID", columnNames = { "MAILBOX_ID", "MAIL_UID" })
     private long id;
 
     /** Order within the list of properties */
     @Basic(optional = false)
     @Column(name = "PROPERTY_LINE_NUMBER", nullable = false)
-    //@Index(name = "INDEX_PROPERTY_LINE_NUMBER")
     private int line;
 
     /** Local part of the name of this property */

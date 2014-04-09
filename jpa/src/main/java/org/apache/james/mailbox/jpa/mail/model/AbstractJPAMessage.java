@@ -29,6 +29,7 @@ import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
@@ -36,6 +37,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import org.apache.james.mailbox.exception.MailboxException;
 import org.apache.james.mailbox.store.mail.model.AbstractMessage;
 import org.apache.james.mailbox.store.mail.model.Message;
@@ -154,7 +156,6 @@ public abstract class AbstractJPAMessage extends AbstractMessage<Long> {
     private long uid;
 
     /** The value for the modSeq field */
-    //@Index
     @Column(name = "MAIL_MODSEQ")
     private long modSeq;
 
@@ -171,7 +172,6 @@ public abstract class AbstractJPAMessage extends AbstractMessage<Long> {
     /** The value for the deleted field */
     @Basic(optional = false)
     @Column(name = "MAIL_IS_DELETED", nullable = false)
-    //@Index
     private boolean deleted = false;
 
     /** The value for the draft field */
@@ -187,13 +187,11 @@ public abstract class AbstractJPAMessage extends AbstractMessage<Long> {
     /** The value for the recent field */
     @Basic(optional = false)
     @Column(name = "MAIL_IS_RECENT", nullable = false)
-    //@Index
     private boolean recent = false;
 
     /** The value for the seen field */
     @Basic(optional = false)
     @Column(name = "MAIL_IS_SEEN", nullable = false)
-    //@Index
     private boolean seen = false;
 
     

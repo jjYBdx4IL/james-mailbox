@@ -28,6 +28,7 @@ import javax.mail.util.SharedByteArrayInputStream;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 import org.apache.commons.io.IOUtils;
@@ -49,7 +50,7 @@ import org.apache.openjpa.persistence.Persistent;
  * TODO: Fix me!
  */
 @Entity(name="Message")
-@Table(name="JAMES_MAIL")
+@Table(name="JAMES_MAIL", indexes = {@Index(columnList="MAIL_MODSEQ")})
 public class JPAStreamingMessage extends AbstractJPAMessage {
 
     @SuppressWarnings("unused")

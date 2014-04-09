@@ -29,6 +29,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
@@ -42,7 +43,7 @@ import org.apache.openjpa.persistence.Externalizer;
 import org.apache.openjpa.persistence.Factory;
 
 @Entity(name="Message")
-@Table(name="JAMES_MAIL")
+@Table(name="JAMES_MAIL", indexes = {@Index(columnList="MAIL_MODSEQ")})
 public class JPAEncryptedMessage extends AbstractJPAMessage {
 
         /** The value for the body field. Lazy loaded */
