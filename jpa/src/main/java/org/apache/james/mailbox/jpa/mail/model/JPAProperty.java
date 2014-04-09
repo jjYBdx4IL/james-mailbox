@@ -33,7 +33,8 @@ import org.apache.james.mailbox.store.mail.model.Property;
     indexes = {
         // TODO The columnNames are not interpreted, see OPENJPA-223 to fix
         // MAILBOX-186
-        @Index(name = "INDEX_PROPERTY_MSG_ID", columnList = "MAILBOX_ID MAIL_UID"),
+        // ??? there are no such columns...???
+        //@Index(name = "INDEX_PROPERTY_MSG_ID", columnList = "MAILBOX_ID,MAIL_UID"),
         @Index(name = "INDEX_PROPERTY_LINE_NUMBER", columnList = "PROPERTY_LINE_NUMBER")
     }
 )
