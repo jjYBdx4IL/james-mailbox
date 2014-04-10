@@ -18,6 +18,8 @@
  ****************************************************************/
 package org.apache.james.mailbox.jpa.mail;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -63,15 +65,18 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
      * @return entitymanger
      */
     public EntityManager getEntityManager() {
-        if (entityManager != null)
+        if (entityManager != null) {
             return entityManager;
+        }
         entityManager = entityManagerFactory.createEntityManager();
         return entityManager;
     }
 
     /**
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.transaction.TransactionalMapper#begin()
      */
+    @Override
     protected void begin() throws MailboxException {
         try {
             getEntityManager().getTransaction().begin();
@@ -82,7 +87,9 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
 
     /**
      * Commit the Transaction and close the EntityManager
+     * @throws org.apache.james.mailbox.exception.MailboxException
      */
+    @Override
     protected void commit() throws MailboxException {
         try {
             getEntityManager().getTransaction().commit();
@@ -92,8 +99,10 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
     }
 
     /**
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.transaction.TransactionalMapper#rollback()
      */
+    @Override
     protected void rollback() throws MailboxException {
         EntityTransaction transaction = entityManager.getTransaction();
         // check if we have a transaction to rollback
@@ -105,19 +114,26 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
     /**
      * Close open {@link EntityManager}
      */
+    @Override
     public void endRequest() {
         if (entityManager != null) {
-            if (entityManager.isOpen())
+            if (entityManager.isOpen()) {
                 entityManager.close();
+            }
             entityManager = null;
         }
     }
 
     /**
+     * @param fType
+     * @param max
+     * @return
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.mail.MessageMapper#findInMailbox(org.apache.james.mailbox.store.mail.model.Mailbox,
      *      org.apache.james.mailbox.model.MessageRange,
      *      org.apache.james.mailbox.store.mail.MessageMapper.FetchType, int)
      */
+    @Override
     public Iterator<Message<Long>> findInMailbox(Mailbox<Long> mailbox, MessageRange set, FetchType fType, int max)
             throws MailboxException {
         try {
@@ -150,8 +166,10 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
     }
 
     /**
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.mail.MessageMapper#countMessagesInMailbox(Mailbox)
      */
+    @Override
     public long countMessagesInMailbox(Mailbox<Long> mailbox) throws MailboxException {
         try {
             return (Long) getEntityManager().createNamedQuery("countMessagesInMailbox")
@@ -162,8 +180,10 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
     }
 
     /**
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.mail.MessageMapper#countUnseenMessagesInMailbox(Mailbox)
      */
+    @Override
     public long countUnseenMessagesInMailbox(Mailbox<Long> mailbox) throws MailboxException {
         try {
             return (Long) getEntityManager().createNamedQuery("countUnseenMessagesInMailbox")
@@ -174,9 +194,11 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
     }
 
     /**
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.mail.MessageMapper#delete(org.apache.james.mailbox.store.mail.model.Mailbox,
      *      org.apache.james.mailbox.store.mail.model.Message)
      */
+    @Override
     public void delete(Mailbox<Long> mailbox, Message<Long> message) throws MailboxException {
         try {
             getEntityManager().remove(message);
@@ -186,9 +208,11 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
     }
 
     /**
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.mail.MessageMapper#findFirstUnseenMessageUid(Mailbox)
      */
     @SuppressWarnings("unchecked")
+    @Override
     public Long findFirstUnseenMessageUid(Mailbox<Long> mailbox) throws MailboxException {
         try {
             Query query = getEntityManager().createNamedQuery("findUnseenMessagesInMailboxOrderByUid").setParameter(
@@ -206,9 +230,11 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
     }
 
     /**
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.mail.MessageMapper#findRecentMessageUidsInMailbox(Mailbox)
      */
     @SuppressWarnings("unchecked")
+    @Override
     public List<Long> findRecentMessageUidsInMailbox(Mailbox<Long> mailbox) throws MailboxException {
         try {
             Query query = getEntityManager().createNamedQuery("findRecentMessageUidsInMailbox").setParameter("idParam",
@@ -261,6 +287,8 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
     /**
      * (non-Javadoc)
      * 
+     * @return
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.mail.MessageMapper#move(org.apache.james.mailbox.store.mail.model.Mailbox,
      *      org.apache.james.mailbox.store.mail.model.Message)
      */
@@ -270,9 +298,12 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
     }
 
     /**
+     * @return
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.mail.AbstractMessageMapper#copy(Mailbox,
      *      long, long, Message)
      */
+    @Override
     protected MessageMetaData copy(Mailbox<Long> mailbox, long uid, long modSeq, Message<Long> original)
             throws MailboxException {
         Message<Long> copy;
@@ -281,22 +312,30 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
     }
 
     /**
+     * @return
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.mail.AbstractMessageMapper#save(Mailbox,
      *      Message)
      */
+    @Override
     protected MessageMetaData save(Mailbox<Long> mailbox, Message<Long> message) throws MailboxException {
 
         try {
 
-            // We need to reload a "JPA attached" mailbox, because the provide
+            // We need to reload a "JPA attached" mailbox, because the provided
             // mailbox is already "JPA detached"
             // If we don't this, we will get an
             // org.apache.openjpa.persistence.ArgumentException.
-            ((AbstractJPAMessage) message)
-                    .setMailbox(getEntityManager().find(JPAMailbox.class, mailbox.getMailboxId()));
+//            ((AbstractJPAMessage) message)
+//                    .setMailbox(getEntityManager().find(JPAMailbox.class, mailbox.getMailboxId()));
+            // java.lang.ClassCastException: org.apache.james.mailbox.store.mail.model.impl.SimpleMessage cannot be cast to org.apache.james.mailbox.jpa.mail.model.AbstractJPAMessage
+            
+            JPAMessage m = new JPAMessage(
+                    getEntityManager().find(JPAMailbox.class, mailbox.getMailboxId()),
+                    message.getUid(), message.getModSeq(), message);
 
-            getEntityManager().persist(message);
-            return new SimpleMessageMetaData(message);
+            getEntityManager().persist(m);
+            return new SimpleMessageMetaData(m);
         } catch (PersistenceException e) {
             throw new MailboxException("Save of message " + message + " failed in mailbox " + mailbox, e);
         }
@@ -307,8 +346,9 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
         Query query = getEntityManager().createNamedQuery("findMessagesInMailboxAfterUID")
                 .setParameter("idParam", mailbox.getMailboxId()).setParameter("uidParam", uid);
 
-        if (batchSize > 0)
+        if (batchSize > 0) {
             query.setMaxResults(batchSize);
+        }
 
         return query.getResultList();
     }
@@ -327,8 +367,9 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
                 .setParameter("idParam", mailbox.getMailboxId()).setParameter("fromParam", from)
                 .setParameter("toParam", to);
 
-        if (batchSize > 0)
+        if (batchSize > 0) {
             query.setMaxResults(batchSize);
+        }
 
         return query.getResultList();
     }
@@ -344,8 +385,7 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
 
     private Map<Long, MessageMetaData> createMetaData(List<Message<Long>> uids) {
         final Map<Long, MessageMetaData> data = new HashMap<Long, MessageMetaData>();
-        for (int i = 0; i < uids.size(); i++) {
-            Message<Long> m = uids.get(i);
+        for (Message<Long> m : uids) {
             data.put(m.getUid(), new SimpleMessageMetaData(m));
         }
         return data;
