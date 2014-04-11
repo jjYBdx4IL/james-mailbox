@@ -24,7 +24,7 @@ import java.util.Date;
 
 import javax.mail.Flags;
 
-import junit.framework.Assert;
+import static org.junit.Assert.*;
 
 import org.apache.james.mailbox.exception.BadCredentialsException;
 import org.apache.james.mailbox.exception.MailboxException;
@@ -60,42 +60,78 @@ public abstract class AbstractMailboxManagerTest {
         setMailboxManager(new MockMailboxManager(getMailboxManager()).getMockMailboxManager());
         
         MailboxSession session = getMailboxManager().createSystemSession(USER_1, LoggerFactory.getLogger("Mock"));
-        Assert.assertEquals(USER_1, session.getUser().getUserName());
+        assertEquals(USER_1, session.getUser().getUserName());
         
         getMailboxManager().startProcessingRequest(session);
         
         MailboxPath inbox = MailboxPath.inbox(session);
-        Assert.assertFalse(getMailboxManager().mailboxExists(inbox, session));
+        assertFalse(getMailboxManager().mailboxExists(inbox, session));
         
         getMailboxManager().createMailbox(inbox, session);
-        Assert.assertTrue(getMailboxManager().mailboxExists(inbox, session));
+        assertTrue(getMailboxManager().mailboxExists(inbox, session));
         
         try {
             getMailboxManager().createMailbox(inbox, session);
-            Assert.fail();
+            fail();
         } catch (MailboxException e) {
             // mailbox already exists!
         }
         
         MailboxPath inboxSubMailbox = new MailboxPath(inbox, "INBOX.Test");
-        Assert.assertFalse(getMailboxManager().mailboxExists(inboxSubMailbox, session));
+        assertFalse(getMailboxManager().mailboxExists(inboxSubMailbox, session));
         
         getMailboxManager().createMailbox(inboxSubMailbox, session);
-        Assert.assertTrue(getMailboxManager().mailboxExists(inboxSubMailbox, session));
+        assertTrue(getMailboxManager().mailboxExists(inboxSubMailbox, session));
         
         getMailboxManager().deleteMailbox(inbox, session);
-        Assert.assertFalse(getMailboxManager().mailboxExists(inbox, session));
+        assertFalse(getMailboxManager().mailboxExists(inbox, session));
         
-        Assert.assertTrue(getMailboxManager().mailboxExists(inboxSubMailbox, session));
+        assertTrue(getMailboxManager().mailboxExists(inboxSubMailbox, session));
         
         getMailboxManager().deleteMailbox(inboxSubMailbox, session);
-        Assert.assertFalse(getMailboxManager().mailboxExists(inboxSubMailbox, session));
+        assertFalse(getMailboxManager().mailboxExists(inboxSubMailbox, session));
 
         getMailboxManager().logout(session, false);
         getMailboxManager().endProcessingRequest(session);
 
-        Assert.assertFalse(session.isOpen());
+        assertFalse(session.isOpen());
+    }
 
+    @Test
+    public void testConcurrentSessions() throws MailboxException, UnsupportedEncodingException {
+
+        setMailboxManager(new MockMailboxManager(getMailboxManager()).getMockMailboxManager());
+
+        MailboxSession session1 = getMailboxManager().createSystemSession(USER_1, LoggerFactory.getLogger("Mock"));
+        assertEquals(USER_1, session1.getUser().getUserName());
+        MailboxSession session2 = getMailboxManager().createSystemSession(USER_1, LoggerFactory.getLogger("Mock"));
+        assertEquals(USER_1, session2.getUser().getUserName());
+
+        getMailboxManager().startProcessingRequest(session1);
+        getMailboxManager().startProcessingRequest(session2);
+
+        MailboxPath inbox1 = MailboxPath.inbox(session1);
+        MailboxPath inbox2 = MailboxPath.inbox(session2);
+
+        getMailboxManager().createMailbox(inbox1, session1);
+        
+        assertTrue(getMailboxManager().mailboxExists(inbox1, session1));
+        assertTrue(getMailboxManager().mailboxExists(inbox2, session2));
+
+        MessageManager mm1 = getMailboxManager().getMailbox(inbox1, session1);
+        MessageManager mm2 = getMailboxManager().getMailbox(inbox1, session1);
+        Long uid1 = mm1.appendMessage(new ByteArrayInputStream("Subject: test\r\n\r\ntestmail".getBytes()), new Date(), session1, false, new Flags());
+        Long uid2 = mm2.appendMessage(new ByteArrayInputStream("Subject: test\r\n\r\ntestmail".getBytes()), new Date(), session2, false, new Flags());
+
+        assertNotEquals(uid1, uid2);
+
+        getMailboxManager().logout(session1, false);
+        getMailboxManager().endProcessingRequest(session1);
+        getMailboxManager().logout(session2, false);
+        getMailboxManager().endProcessingRequest(session2);
+
+        assertFalse(session1.isOpen());
+        assertFalse(session2.isOpen());
     }
 
     /**
@@ -111,7 +147,7 @@ public abstract class AbstractMailboxManagerTest {
 
         MailboxSession mailboxSession = getMailboxManager().createSystemSession("manager", LoggerFactory.getLogger("testList"));
         getMailboxManager().startProcessingRequest(mailboxSession);
-        Assert.assertEquals(MockMailboxManager.EXPECTED_MAILBOXES_COUNT, getMailboxManager().list(mailboxSession).size());
+        assertEquals(MockMailboxManager.EXPECTED_MAILBOXES_COUNT, getMailboxManager().list(mailboxSession).size());
 
     }
     
