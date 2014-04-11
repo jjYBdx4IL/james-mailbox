@@ -54,7 +54,6 @@ public class MaildirMailboxManagerTest extends AbstractMailboxManagerTest {
     public void setup() throws Exception {
         assertFalse("Maildir tests work only on non-windows systems. So skip the test",
                 OsDetector.isWindows());
-        deleteMaildirTestDirectory();
         createMailboxManager();
     }
     

@@ -121,7 +121,7 @@ public abstract class AbstractMailboxManagerTest {
         assertTrue(getMailboxManager().mailboxExists(inbox2, session2));
 
         MessageManager mm1 = getMailboxManager().getMailbox(inbox1, session1);
-        MessageManager mm2 = getMailboxManager().getMailbox(inbox1, session1);
+        MessageManager mm2 = getMailboxManager().getMailbox(inbox2, session2);
         Long uid1 = mm1.appendMessage(new ByteArrayInputStream("Subject: test\r\n\r\ntestmail".getBytes()), new Date(), session1, false, new Flags());
         Long uid2 = mm2.appendMessage(new ByteArrayInputStream("Subject: test\r\n\r\ntestmail".getBytes()), new Date(), session2, false, new Flags());
 
