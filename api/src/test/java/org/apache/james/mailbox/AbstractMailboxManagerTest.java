@@ -107,6 +107,8 @@ public abstract class AbstractMailboxManagerTest {
         MailboxSession session2 = getMailboxManager().createSystemSession(USER_1, LoggerFactory.getLogger("Mock"));
         assertEquals(USER_1, session2.getUser().getUserName());
 
+        assertNotEquals(session1, session2);
+
         getMailboxManager().startProcessingRequest(session1);
         getMailboxManager().startProcessingRequest(session2);
 
