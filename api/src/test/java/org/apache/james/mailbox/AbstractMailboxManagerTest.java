@@ -136,6 +136,41 @@ public abstract class AbstractMailboxManagerTest {
         assertFalse(session2.isOpen());
     }
 
+    @Test
+    public void testSubsequentSessions() throws MailboxException, UnsupportedEncodingException {
+
+        setMailboxManager(new MockMailboxManager(getMailboxManager()).getMockMailboxManager());
+
+        MailboxSession session1 = getMailboxManager().createSystemSession(USER_1, LoggerFactory.getLogger("Mock"));
+        assertEquals(USER_1, session1.getUser().getUserName());
+        getMailboxManager().startProcessingRequest(session1);
+        MailboxPath inbox1 = MailboxPath.inbox(session1);
+        getMailboxManager().createMailbox(inbox1, session1);
+        assertTrue(getMailboxManager().mailboxExists(inbox1, session1));
+        MessageManager mm1 = getMailboxManager().getMailbox(inbox1, session1);
+        Long uid1 = mm1.appendMessage(new ByteArrayInputStream("Subject: test\r\n\r\ntestmail".getBytes()), new Date(), session1, false, new Flags());
+
+        MailboxSession session2 = getMailboxManager().createSystemSession(USER_1, LoggerFactory.getLogger("Mock"));
+        getMailboxManager().startProcessingRequest(session2);
+        MailboxPath inbox2 = MailboxPath.inbox(session2);
+        assertTrue(getMailboxManager().mailboxExists(inbox2, session2));
+        MessageManager mm2 = getMailboxManager().getMailbox(inbox2, session2);
+        mm2.getMetaData(true, session2, MessageManager.MetaData.FetchGroup.FIRST_UNSEEN);
+        Long uid2 = mm2.appendMessage(new ByteArrayInputStream("Subject: test\r\n\r\ntestmail".getBytes()), new Date(), session2, false, new Flags());
+        assertEquals(USER_1, session2.getUser().getUserName());
+
+        assertNotEquals(session1, session2);
+        assertNotEquals(uid1, uid2);
+
+        getMailboxManager().logout(session1, false);
+        getMailboxManager().endProcessingRequest(session1);
+        getMailboxManager().logout(session2, false);
+        getMailboxManager().endProcessingRequest(session2);
+
+        assertFalse(session1.isOpen());
+        assertFalse(session2.isOpen());
+    }
+
     /**
      * Create some INBOXes and their sub mailboxes and assert list() method.
      * 
