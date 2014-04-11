@@ -28,6 +28,7 @@ import org.apache.james.mailbox.jpa.mail.model.JPAMailbox;
 import org.apache.james.mailbox.model.MailboxPath;
 import org.apache.james.mailbox.store.Authenticator;
 import org.apache.james.mailbox.store.StoreMailboxManager;
+import org.apache.james.mailbox.store.StoreMessageManager;
 import org.apache.james.mailbox.store.mail.model.Mailbox;
 import org.apache.james.mailbox.store.transaction.TransactionalMapper;
 
@@ -37,7 +38,8 @@ import org.apache.james.mailbox.store.transaction.TransactionalMapper;
 public abstract class JPAMailboxManager extends StoreMailboxManager<Long> {
     
     public JPAMailboxManager(JPAMailboxSessionMapperFactory mailboxSessionMapperFactory,
-            final Authenticator authenticator, final MailboxPathLocker locker, MailboxACLResolver aclResolver, GroupMembershipResolver groupMembershipResolver) {
+            final Authenticator authenticator, final MailboxPathLocker locker, MailboxACLResolver aclResolver,
+            GroupMembershipResolver groupMembershipResolver) {
         super(mailboxSessionMapperFactory, authenticator, locker, aclResolver, groupMembershipResolver);
     }
     
@@ -55,15 +57,25 @@ public abstract class JPAMailboxManager extends StoreMailboxManager<Long> {
     public void deleteEverything(MailboxSession mailboxSession) throws MailboxException {
         final JPAMailboxMapper mapper = (JPAMailboxMapper) getMapperFactory().getMailboxMapper(mailboxSession);
         mapper.execute(new TransactionalMapper.VoidTransaction() {
+            @Override
             public void runVoid() throws MailboxException {
                 mapper.deleteAllMemberships(); 
             }
         });
         mapper.execute(new TransactionalMapper.VoidTransaction() {
+            @Override
             public void runVoid() throws MailboxException {
                 mapper.deleteAllMailboxes(); 
             }
         });
+    }
+
+    @Override
+    protected StoreMessageManager<Long> createMessageManager(Mailbox<Long> mailboxRow, MailboxSession session)
+            throws MailboxException {
+        StoreMessageManager<Long> result =  new JPAMessageManager(getMapperFactory(), getMessageSearchIndex(),
+                getEventDispatcher(), getLocker(), mailboxRow, getAclResolver(), getGroupMembershipResolver());
+        return result;
     }
 
 }

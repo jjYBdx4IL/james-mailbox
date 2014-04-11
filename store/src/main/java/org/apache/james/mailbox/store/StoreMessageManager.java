@@ -257,6 +257,7 @@ public class StoreMessageManager<Id> implements org.apache.james.mailbox.Message
             // Create a temporary file and copy the message to it. We will work
             // with the file as
             // source for the InputStream
+            // TODO this is slow
             file = File.createTempFile("imap", ".msg");
             out = new FileOutputStream(file);
 

@@ -321,21 +321,15 @@ public class JPAMessageMapper extends AbstractMessageMapper<Long> implements Mes
     protected MessageMetaData save(Mailbox<Long> mailbox, Message<Long> message) throws MailboxException {
 
         try {
-
             // We need to reload a "JPA attached" mailbox, because the provided
             // mailbox is already "JPA detached"
             // If we don't this, we will get an
             // org.apache.openjpa.persistence.ArgumentException.
-//            ((AbstractJPAMessage) message)
-//                    .setMailbox(getEntityManager().find(JPAMailbox.class, mailbox.getMailboxId()));
-            // java.lang.ClassCastException: org.apache.james.mailbox.store.mail.model.impl.SimpleMessage cannot be cast to org.apache.james.mailbox.jpa.mail.model.AbstractJPAMessage
-            
-            JPAMessage m = new JPAMessage(
-                    getEntityManager().find(JPAMailbox.class, mailbox.getMailboxId()),
-                    message.getUid(), message.getModSeq(), message);
+            ((AbstractJPAMessage) message)
+                    .setMailbox(getEntityManager().find(JPAMailbox.class, mailbox.getMailboxId()));
 
-            getEntityManager().persist(m);
-            return new SimpleMessageMetaData(m);
+            getEntityManager().persist(message);
+            return new SimpleMessageMetaData(message);
         } catch (PersistenceException e) {
             throw new MailboxException("Save of message " + message + " failed in mailbox " + mailbox, e);
         }
