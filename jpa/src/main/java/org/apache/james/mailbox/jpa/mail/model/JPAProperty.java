@@ -67,8 +67,8 @@ public class JPAProperty implements Property {
     @Column(name = "PROPERTY_VALUE", nullable = false, length = 1024)
     private String value;
 
-    @Version
-    private long version;
+//    @Version
+//    private long version;
 
     /**
      * @deprecated enhancement only
@@ -150,13 +150,13 @@ public class JPAProperty implements Property {
         return value;
     }
 
-    public long getVersion() {
-        return version;
-    }
-
-    public void setVersion(long _version) {
-        version = _version;
-    }
+//    public long getVersion() {
+//        return version;
+//    }
+//
+//    public void setVersion(long _version) {
+//        version = _version;
+//    }
 
     @Override
     public int hashCode() {

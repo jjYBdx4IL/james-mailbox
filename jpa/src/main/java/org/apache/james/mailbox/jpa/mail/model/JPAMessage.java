@@ -39,7 +39,12 @@ import org.apache.james.mailbox.store.mail.model.Message;
 import org.apache.james.mailbox.store.mail.model.impl.PropertyBuilder;
 
 @Entity(name="Message")
-@Table(name="JAMES_MAIL", indexes = {@Index(columnList="MAIL_MODSEQ")})
+@Table(name="JAMES_MAIL", indexes = {
+    @Index(columnList="MAIL_MODSEQ"),
+    @Index(columnList="MAIL_IS_DELETED"),
+    @Index(columnList="MAIL_IS_RECENT"),
+    @Index(columnList="MAIL_IS_SEEN")
+})
 public class JPAMessage extends AbstractJPAMessage {
 
     /** The value for the body field. Lazy loaded */

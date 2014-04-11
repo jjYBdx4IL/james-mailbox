@@ -50,7 +50,12 @@ import org.apache.openjpa.persistence.Persistent;
  * TODO: Fix me!
  */
 @Entity(name="Message")
-@Table(name="JAMES_MAIL", indexes = {@Index(columnList="MAIL_MODSEQ")})
+@Table(name="JAMES_MAIL", indexes = {
+    @Index(columnList="MAIL_MODSEQ"),
+    @Index(columnList="MAIL_IS_DELETED"),
+    @Index(columnList="MAIL_IS_RECENT"),
+    @Index(columnList="MAIL_IS_SEEN")
+})
 public class JPAStreamingMessage extends AbstractJPAMessage {
 
     @SuppressWarnings("unused")

@@ -43,7 +43,12 @@ import org.apache.openjpa.persistence.Externalizer;
 import org.apache.openjpa.persistence.Factory;
 
 @Entity(name="Message")
-@Table(name="JAMES_MAIL", indexes = {@Index(columnList="MAIL_MODSEQ")})
+@Table(name="JAMES_MAIL", indexes = {
+    @Index(columnList="MAIL_MODSEQ"),
+    @Index(columnList="MAIL_IS_DELETED"),
+    @Index(columnList="MAIL_IS_RECENT"),
+    @Index(columnList="MAIL_IS_SEEN")
+})
 public class JPAEncryptedMessage extends AbstractJPAMessage {
 
         /** The value for the body field. Lazy loaded */

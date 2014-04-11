@@ -94,8 +94,8 @@ public class JPAMailbox implements Mailbox<Long> {
     @Column(name = "MAILBOX_HIGHEST_MODSEQ", nullable = false)
     private long highestModSeq;
 
-    @Version
-    private long version;
+//    @Version
+//    private long version;
 
     /**
      * JPA only
@@ -218,13 +218,13 @@ public class JPAMailbox implements Mailbox<Long> {
         return ++highestModSeq;
     }
     
-    public long getVersion() {
-        return version;
-    }
-
-    public void setVersion(long _version) {
-        version = _version;
-    }
+//    public long getVersion() {
+//        return version;
+//    }
+//
+//    public void setVersion(long _version) {
+//        version = _version;
+//    }
 
     /* (non-Javadoc)
      * @see org.apache.james.mailbox.store.mail.model.Mailbox#getACL()

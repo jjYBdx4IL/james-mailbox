@@ -68,7 +68,10 @@ import org.apache.james.mailbox.store.mail.model.impl.PropertyBuilder;
             query="SELECT message FROM Message message WHERE message.mailbox.mailboxId = :idParam AND message.uid=:uidParam AND message.deleted=TRUE"),                    
     @NamedQuery(name="findDeletedMessagesInMailboxAfterUID",
             query="SELECT message FROM Message message WHERE message.mailbox.mailboxId = :idParam AND message.uid>=:uidParam AND message.deleted=TRUE"),          
-            
+
+    // sql database "DELETE" is usually very evil because it is likely to produce lock contention.
+    // should be replaced with an additional deleted flag and a periodic cleaner process that
+    // takes a global lock while executing.
     @NamedQuery(name="deleteDeletedMessagesInMailbox",
             query="DELETE FROM Message message WHERE message.mailbox.mailboxId = :idParam AND message.deleted=TRUE"),        
     @NamedQuery(name="deleteDeletedMessagesInMailboxBetweenUIDs",
@@ -219,8 +222,8 @@ public abstract class AbstractJPAMessage extends AbstractMessage<Long> {
     @Column(name = "MAIL_TEXTUAL_LINE_COUNT", nullable = true)
     private Long textualLineCount;
     
-    @Version
-    private long version;
+//    @Version
+//    private long version;
 
     /** Meta data for this message */
     @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
@@ -458,13 +461,13 @@ public abstract class AbstractJPAMessage extends AbstractMessage<Long> {
         this.uid = uid;
     }
 
-    public long getVersion() {
-        return version;
-    }
-
-    public void setVersion(long _version) {
-        version = _version;
-    }
+//    public long getVersion() {
+//        return version;
+//    }
+//
+//    public void setVersion(long _version) {
+//        version = _version;
+//    }
     
     /**
      * @see org.apache.james.mailbox.store.mail.model.Message#setFlags(javax.mail.Flags)

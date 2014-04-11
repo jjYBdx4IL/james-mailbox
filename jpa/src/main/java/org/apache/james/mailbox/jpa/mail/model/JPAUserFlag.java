@@ -42,8 +42,8 @@ public class JPAUserFlag {
     @Column(name = "USERFLAG_NAME", nullable = false, length = 500)
     private String name;
 
-    @Version
-    private long version;
+//    @Version
+//    private long version;
     
     /**
      * @deprecated enhancement only
@@ -78,13 +78,13 @@ public class JPAUserFlag {
         return name;
     }
 
-    public long getVersion() {
-        return version;
-    }
-
-    public void setVersion(long _version) {
-        version = _version;
-    }
+//    public long getVersion() {
+//        return version;
+//    }
+//
+//    public void setVersion(long _version) {
+//        version = _version;
+//    }
 
     @Override
     public int hashCode() {
