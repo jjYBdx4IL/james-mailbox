@@ -24,6 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 @Entity(name="UserFlag")
 @Table(name="JAMES_MAIL_USERFLAG")
@@ -40,7 +41,9 @@ public class JPAUserFlag {
     @Basic(optional = false)
     @Column(name = "USERFLAG_NAME", nullable = false, length = 500)
     private String name;
-    
+
+    @Version
+    private long version;
     
     /**
      * @deprecated enhancement only
@@ -73,6 +76,14 @@ public class JPAUserFlag {
      */
     public String getName() {
         return name;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long _version) {
+        version = _version;
     }
 
     @Override

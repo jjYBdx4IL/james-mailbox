@@ -29,7 +29,6 @@ import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
@@ -37,7 +36,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.Table;
+import javax.persistence.Version;
 import org.apache.james.mailbox.exception.MailboxException;
 import org.apache.james.mailbox.store.mail.model.AbstractMessage;
 import org.apache.james.mailbox.store.mail.model.Message;
@@ -220,6 +219,8 @@ public abstract class AbstractJPAMessage extends AbstractMessage<Long> {
     @Column(name = "MAIL_TEXTUAL_LINE_COUNT", nullable = true)
     private Long textualLineCount;
     
+    @Version
+    private long version;
 
     /** Meta data for this message */
     @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
@@ -455,6 +456,14 @@ public abstract class AbstractJPAMessage extends AbstractMessage<Long> {
     
     public void setUid(long uid) {
         this.uid = uid;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long _version) {
+        version = _version;
     }
     
     /**

@@ -25,6 +25,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import org.apache.james.mailbox.store.mail.model.Property;
 
 @Entity(name = "Property")
@@ -65,6 +66,9 @@ public class JPAProperty implements Property {
     @Basic(optional = false)
     @Column(name = "PROPERTY_VALUE", nullable = false, length = 1024)
     private String value;
+
+    @Version
+    private long version;
 
     /**
      * @deprecated enhancement only
@@ -144,6 +148,14 @@ public class JPAProperty implements Property {
      */
     public String getValue() {
         return value;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long _version) {
+        version = _version;
     }
 
     @Override
