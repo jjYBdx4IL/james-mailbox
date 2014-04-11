@@ -18,7 +18,7 @@
  ****************************************************************/
 package org.apache.james.mailbox.maildir;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +30,6 @@ import org.apache.james.mailbox.acl.GroupMembershipResolver;
 import org.apache.james.mailbox.acl.MailboxACLResolver;
 import org.apache.james.mailbox.acl.SimpleGroupMembershipResolver;
 import org.apache.james.mailbox.acl.UnionMailboxACLResolver;
-import org.apache.james.mailbox.exception.BadCredentialsException;
 import org.apache.james.mailbox.exception.MailboxException;
 import org.apache.james.mailbox.exception.MailboxExistsException;
 import org.apache.james.mailbox.store.JVMMailboxPathLocker;
@@ -53,11 +52,10 @@ public class MaildirMailboxManagerTest extends AbstractMailboxManagerTest {
      */
     @Before
     public void setup() throws Exception {
-        if (OsDetector.isWindows()) {
-            System.out.println("Maildir tests work only on non-windows systems. So skip the test");
-        } else {
-          deleteMaildirTestDirectory();
-        }
+        assertFalse("Maildir tests work only on non-windows systems. So skip the test",
+                OsDetector.isWindows());
+        deleteMaildirTestDirectory();
+        createMailboxManager();
     }
     
     /**
@@ -68,141 +66,61 @@ public class MaildirMailboxManagerTest extends AbstractMailboxManagerTest {
     @After
     public void tearDown() throws IOException {
         if (OsDetector.isWindows()) {
-            System.out.println("Maildir tests work only on non-windows systems. So skip the test");
-        } else {
-          deleteMaildirTestDirectory();
+            return;
         }
+        deleteMaildirTestDirectory();
     }
 
     /**
-     * @see org.apache.james.mailbox.AbstractMailboxManagerTest#testList()
-     */
-    @Test
-    @Override
-    public void testList() throws MailboxException, UnsupportedEncodingException {
-        
-        if (OsDetector.isWindows()) {
-            System.out.println("Maildir tests work only on non-windows systems. So skip the test");
-        } else {
-
-            doTestListWithMaildirStoreConfiguration("/%domain/%user");
-
-            // TODO Tests fail with /%user configuration
-            try {
-                doTestListWithMaildirStoreConfiguration("/%user");
-                fail();
-            } catch (MailboxExistsException e) {
-                // This is expected as the there are many users which have the same localpart
-            }
-            // TODO Tests fail with /%fulluser configuration
-            doTestListWithMaildirStoreConfiguration("/%fulluser");
-
-        }
-            
-    }
-    
-    /**
-     * @see org.apache.james.mailbox.AbstractMailboxManagerTest#testBasicOperations()
-     */
-    @Test
-    @Override
-    public void testBasicOperations() throws BadCredentialsException, MailboxException, UnsupportedEncodingException {
-        
-        if (OsDetector.isWindows()) {
-            System.out.println("Maildir tests work only on non-windows systems. So skip the test");
-        } else {
-
-            MaildirStore store = new MaildirStore(MAILDIR_HOME + "/%domain/%user", new JVMMailboxPathLocker());
-            MaildirMailboxSessionMapperFactory mf = new MaildirMailboxSessionMapperFactory(store);
-            
-            MailboxACLResolver aclResolver = new UnionMailboxACLResolver();
-            GroupMembershipResolver groupMembershipResolver = new SimpleGroupMembershipResolver();
-
-            StoreMailboxManager<Integer> manager = new StoreMailboxManager<Integer>(mf, null, new JVMMailboxPathLocker(), aclResolver, groupMembershipResolver);
-            manager.init();
-            setMailboxManager(manager);
-            try {
-                super.testBasicOperations();
-            } finally {
-                try {
-                    deleteMaildirTestDirectory();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-       
-        }
-
-    }
-
-    /**
-     * @see org.apache.james.mailbox.AbstractMailboxManagerTest#testCreateSubFolderDirectly()
-     */
-    @Test
-    @Override
-    public void testCreateSubFolderDirectly() throws BadCredentialsException, MailboxException { 
-
-        if (OsDetector.isWindows()) {
-            System.out.println("Maildir tests work only on non-windows systems. So skip the test");
-        } else {
-
-            MaildirStore store = new MaildirStore(MAILDIR_HOME + "/%domain/%user", new JVMMailboxPathLocker());
-            MaildirMailboxSessionMapperFactory mf = new MaildirMailboxSessionMapperFactory(store);
-            MailboxACLResolver aclResolver = new UnionMailboxACLResolver();
-            GroupMembershipResolver groupMembershipResolver = new SimpleGroupMembershipResolver();
-
-            StoreMailboxManager<Integer> manager = new StoreMailboxManager<Integer>(mf, null, new JVMMailboxPathLocker(), aclResolver, groupMembershipResolver);
-            manager.init();
-            setMailboxManager(manager);
-            try {
-                super.testCreateSubFolderDirectly();
-            } finally {
-                try {
-                    deleteMaildirTestDirectory();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-       
-    
-        }
-
-    }
-
-    /**
-     * Create the maildirStore with the provided configuration and executes the list() tests.
-     * Cleans the generated artifacts.
-     * 
-     * @param maildirStoreConfiguration
+     * TODO Tests fail with /%user configuration.
      * @throws MailboxException
      * @throws UnsupportedEncodingException
+     * @throws IOException
      */
-    private void doTestListWithMaildirStoreConfiguration(String maildirStoreConfiguration) throws MailboxException, UnsupportedEncodingException {
+    // This is expected as the there are many users which have the same localpart
+    @Test(expected = MailboxExistsException.class)
+    public void testListSimpleUserMaildirStoreConfig() throws MailboxException, UnsupportedEncodingException, IOException {
+        createMailboxManager("/%user");
+        super.testList();
+    }
+
+    /**
+     * TODO Tests fail with /%fulluser configuration.
+     * @throws MailboxException
+     * @throws UnsupportedEncodingException
+     * @throws IOException
+     */
+    @Test
+    public void testListFulluserMaildirStoreConfig() throws MailboxException, UnsupportedEncodingException, IOException {
+        createMailboxManager("/%fulluser");
+        super.testList();
+    }
+
+    /**
+     * @throws org.apache.james.mailbox.exception.MailboxException
+     * @see org.apache.james.mailbox.MailboxManagerTest#createMailboxManager()
+     */
+    @Override
+    protected void createMailboxManager() throws MailboxException {
+        createMailboxManager("/%domain/%user");
+    }
+
+    private void createMailboxManager(String maildirStoreConfiguration) throws MailboxException {
+        try {
+            deleteMaildirTestDirectory();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+
         MaildirStore store = new MaildirStore(MAILDIR_HOME + maildirStoreConfiguration, new JVMMailboxPathLocker());
         MaildirMailboxSessionMapperFactory mf = new MaildirMailboxSessionMapperFactory(store);
+
         MailboxACLResolver aclResolver = new UnionMailboxACLResolver();
         GroupMembershipResolver groupMembershipResolver = new SimpleGroupMembershipResolver();
 
         StoreMailboxManager<Integer> manager = new StoreMailboxManager<Integer>(mf, null, new JVMMailboxPathLocker(), aclResolver, groupMembershipResolver);
         manager.init();
         setMailboxManager(manager);
-        try {
-            super.testList();
-        } finally {
-            try {
-                deleteMaildirTestDirectory();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * @see org.apache.james.mailbox.MailboxManagerTest#createMailboxManager()
-     */
-    @Override
-    protected void createMailboxManager() {
-        // Do nothing, the maildir mailboxManager is created in the test method.
     }
    
     /**
