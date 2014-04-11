@@ -242,6 +242,11 @@
                 <version>${javax.mail.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>javax.mail</artifactId>
+                <version>${javax.mail.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.activation</groupId>
                 <artifactId>activation</artifactId>
                 <version>${activation.version}</version>
@@ -294,6 +299,7 @@
                 <version>${slf4j.version}</version>
                 <scope>test</scope>
             </dependency>
+
             <!--
                 START Logging
             -->
@@ -566,6 +572,34 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>oracle-javamail</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <javax.activation.groupId>javax.activation</javax.activation.groupId>
+                <javax.activation.artifactId>activation</javax.activation.artifactId>
+                <javax.mail.groupId>com.sun.mail</javax.mail.groupId>
+                <javax.mail.artifactId>javax.mail</javax.mail.artifactId>
+                <javax.mail.version>1.5.1</javax.mail.version>
+            </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                        <version>1.2.17</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>javax.mail</groupId>
+                                <artifactId>mail</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>    
         <profile>
             <id>geronimo</id>
             <properties>
