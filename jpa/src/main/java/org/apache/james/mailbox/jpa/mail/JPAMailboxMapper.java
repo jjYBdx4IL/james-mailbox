@@ -51,6 +51,7 @@ public class JPAMailboxMapper extends JPATransactionalMapper implements MailboxM
     /**
      * Commit the transaction. If the commit fails due a conflict in a unique key constraint a {@link MailboxExistsException}
      * will get thrown
+     * @throws org.apache.james.mailbox.exception.MailboxException
      */
     @Override
     protected void commit() throws MailboxException {
@@ -69,8 +70,10 @@ public class JPAMailboxMapper extends JPATransactionalMapper implements MailboxM
     }
     
     /**
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.mail.MailboxMapper#save(Mailbox)
      */
+    @Override
     public void save(Mailbox<Long> mailbox) throws MailboxException {
         try {
             this.lastMailboxName = mailbox.getName();
@@ -81,8 +84,11 @@ public class JPAMailboxMapper extends JPATransactionalMapper implements MailboxM
     }
 
     /**
+     * @throws org.apache.james.mailbox.exception.MailboxException
+     * @throws org.apache.james.mailbox.exception.MailboxNotFoundException
      * @see org.apache.james.mailbox.store.mail.MailboxMapper#findMailboxByPath(MailboxPath)
      */
+    @Override
     public Mailbox<Long> findMailboxByPath(MailboxPath mailboxPath) throws MailboxException, MailboxNotFoundException {
         try {
             if (mailboxPath.getUser() == null) {
@@ -98,8 +104,10 @@ public class JPAMailboxMapper extends JPATransactionalMapper implements MailboxM
     }
 
     /**
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.mail.MailboxMapper#delete(Mailbox)
      */
+    @Override
     public void delete(Mailbox<Long> mailbox) throws MailboxException {
         try {  
             getEntityManager().createNamedQuery("deleteMessages").setParameter("idParam", mailbox.getMailboxId()).executeUpdate();
@@ -110,9 +118,11 @@ public class JPAMailboxMapper extends JPATransactionalMapper implements MailboxM
     }
 
     /**
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.mail.MailboxMapper#findMailboxWithPathLike(MailboxPath)
      */
     @SuppressWarnings("unchecked")
+    @Override
     public List<Mailbox<Long>> findMailboxWithPathLike(MailboxPath path) throws MailboxException {
         try {
             if (path.getUser() == null) {
@@ -142,8 +152,11 @@ public class JPAMailboxMapper extends JPATransactionalMapper implements MailboxM
     }
     
     /**
+     * @throws org.apache.james.mailbox.exception.MailboxException
+     * @throws org.apache.james.mailbox.exception.MailboxNotFoundException
      * @see org.apache.james.mailbox.store.mail.MailboxMapper#hasChildren(Mailbox, char)
      */
+    @Override
     public boolean hasChildren(Mailbox<Long> mailbox, char delimiter) throws MailboxException,
             MailboxNotFoundException {
         final String name = mailbox.getName() + delimiter + SQL_WILDCARD_CHAR; 
@@ -157,9 +170,11 @@ public class JPAMailboxMapper extends JPATransactionalMapper implements MailboxM
     }
 
 	/**
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.mail.MailboxMapper#list()
      */
     @SuppressWarnings("unchecked")
+    @Override
     public List<Mailbox<Long>> list() throws MailboxException{
         try {
             return getEntityManager().createNamedQuery("listMailboxes").getResultList();

@@ -29,8 +29,10 @@ import org.apache.james.mailbox.exception.MailboxException;
 public abstract class TransactionalMapper implements Mapper {
 
     /**
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @see org.apache.james.mailbox.store.transaction.Mapper#execute(org.apache.james.mailbox.store.transaction.Mapper.Transaction)
      */
+    @Override
     public final <T> T execute(Transaction<T> transaction) throws MailboxException {
         begin();
         try {
@@ -46,21 +48,21 @@ public abstract class TransactionalMapper implements Mapper {
     /**
      * Begin transaction
      * 
-     * @throws StorageException
+     * @throws org.apache.james.mailbox.exception.MailboxException
      */
     protected abstract void begin() throws MailboxException;
 
     /**
      * Commit transaction
      * 
-     * @throws StorageException
+     * @throws org.apache.james.mailbox.exception.MailboxException
      */
     protected abstract void commit() throws MailboxException;
     
     /**
      * Rollback transaction
      * 
-     * @throws StorageException
+     * @throws org.apache.james.mailbox.exception.MailboxException
      */
     protected abstract void rollback() throws MailboxException;
 

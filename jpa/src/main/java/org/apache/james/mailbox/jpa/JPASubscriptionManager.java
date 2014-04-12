@@ -36,6 +36,7 @@ public class JPASubscriptionManager extends StoreSubscriptionManager {
     /**
      * @see org.apache.james.mailbox.store.StoreSubscriptionManager#createSubscription(org.apache.james.mailbox.MailboxSession, java.lang.String)
      */
+    @Override
     protected Subscription createSubscription(final MailboxSession session, final String mailbox) {
         final Subscription newSubscription = new JPASubscription(session.getUser().getUserName(), mailbox);
         return newSubscription;

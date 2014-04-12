@@ -33,6 +33,7 @@ import org.apache.james.mailbox.model.MailboxPath;
 public interface MailboxPathLocker {
 
     /**
+     * @throws org.apache.james.mailbox.exception.MailboxException
      * @deprecated use {@link #executeWithLock(MailboxSession, MailboxPath, LockAwareExecution, boolean)} with argument <code>true</code>
      */
     @Deprecated
